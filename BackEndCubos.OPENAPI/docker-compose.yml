@@ -1,0 +1,57 @@
+version: '3.5'
+services: # Services to deploy
+  postgres:
+    container_name: postgres_container
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sidams1234}
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "postgres"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s 
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${POSTGRES_DEFAULT_EMAIL:-projeto@projeto.com}
+      PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_DEFAULT_PASSWORD:-sidams1234}
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - postgres
+    restart: unless-stopped        
+
+  cubos_back:
+    container_name: back_container
+    image: cubos_back
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - "3500:80"
+    networks:
+      - postgres
+    environment:
+      - DEVELOPMENT=1    
+  
+configs:
+  httpd-config:
+    external: true
+
+secrets:
+  server-certificate:
+    external: true
+
+networks:
+  back-tier: {}
+  postgres:
+    driver: bridge

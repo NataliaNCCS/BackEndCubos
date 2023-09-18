@@ -6,6 +6,8 @@ using BackEndCubos.Infra.Data.Repositories;
 using BackEndCubos.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using BackEndCubos.Domain.Services;
+using Microsoft.Win32;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,22 @@ IConfiguration configuration = new ConfigurationBuilder()
 builder.Services.AddDbContext<PostgreSQLContext>(options =>
         options.UseNpgsql(configuration.GetConnectionString("PostgreSQLConnection")));
 
+//bool isWindows = System.Runtime.InteropServices.RuntimeInformation
+//                                           .IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+
+//ProcessStartInfo processStartInfo = new ProcessStartInfo();
+
+//if (isWindows)
+//{
+
+//    processStartInfo.FileName = "cmd.exe";
+//    processStartInfo.Arguments = "";
+//}
+//else
+//{
+//    processStartInfo.FileName = @"bash";
+//    processStartInfo.Arguments = "";
+//}
 
 // Add scoped services to the container.
 builder.Services.AddScoped<IApplicationServicePerson, ApplicationServicePerson>();
