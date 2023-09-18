@@ -28,8 +28,8 @@ namespace BackEndCubos.Infra.Data.Repositories
 
             var person = postgreSQLContext.Set<Person>().Where(x => x.Id == peopleId).FirstOrDefault();
             
-            if (person is not null)
-                person.Accounts.Append(account);
+            //if (person is not null)
+            //    person.Accounts.Append(account);
 
             postgreSQLContext.SaveChanges();
 
