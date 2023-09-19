@@ -1,31 +1,56 @@
-﻿using BackEndCubos.Domain.Core.Interfaces.Repositories;
+﻿using BackEndCubos.Domain.Core.DTOS.ResponseDTOs;
+using BackEndCubos.Domain.Core.Interfaces.Repositories;
 using BackEndCubos.Domain.Core.Interfaces.Services;
 using BackEndCubos.Domain.Entities;
+using static BackEndCubos.Domain.Core.DTOS.ResponseDTOs.PersonDTO;
 
 namespace BackEndCubos.Domain.Services
 {
-    public class ServicePerson : ServiceBase<Person>, IServicePerson
+    public class ServicePerson : IServicePerson
     {
         private readonly IRepositoryPerson repository;
 
-        public ServicePerson(IRepositoryPerson repository) : base(repository)
+        public ServicePerson(IRepositoryPerson repository) 
         {
             this.repository = repository;
         }
 
-        public IEnumerable<PersonAccount> GetAccounts(Guid peopleId)
+        public PersonDTO CreatePerson(Person person)
         {
-            return repository.GetAccounts(peopleId);
+            person.CreatedAt = DateTime.UtcNow;
+            person.UpdatedAt = DateTime.UtcNow;
+
+            var createdPerson = repository.CreatePerson(person);
+
+            var personDTO = new PersonDTO()
+            {
+                Id = createdPerson.Id,
+                Name = createdPerson.Name,
+                Document = createdPerson.Document,
+                CreatedAt = createdPerson.CreatedAt,
+                UpdatedAt = createdPerson.UpdatedAt,
+            };
+
+            return personDTO;
         }
 
-        public IEnumerable<Card> GetCards(Guid peopleId)
+        public PersonWithCardsDTO GetCards(Guid personId)
         {
-            return repository.GetCards(peopleId);
-        }
+            var cards = repository.GetCards(personId)
+            .Select(card => new CardDTO
+            {
+                Id = card.Id,
+                Type = card.Type,
+                Number = card.Number.Substring(card.Number.Length - 4),
+                CVV = card.CVV,
+                CreatedAt = card.CreatedAt,
+                UpdatedAt = card.UpdatedAt,
+            });
 
-        public PersonAccount PostAccount(Guid peopleId, PersonAccount account)
-        {
-            return repository.PostAccount(peopleId, account);
+            return new PersonWithCardsDTO()
+            {
+                Cards = cards,
+            };
         }
     }
 }

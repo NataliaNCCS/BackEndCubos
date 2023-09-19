@@ -9,14 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BackEndCubos.Domain.Services\BackEndCubos.Domain.Services.csproj" />
-    <ProjectReference Include="..\BackEndCubos.Infra\BackEndCubos.Infra.csproj" />
   </ItemGroup>
 
 </Project>

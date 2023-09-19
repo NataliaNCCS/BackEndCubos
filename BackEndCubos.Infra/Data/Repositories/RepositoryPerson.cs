@@ -3,37 +3,38 @@ using BackEndCubos.Domain.Entities;
 
 namespace BackEndCubos.Infra.Data.Repositories
 {
-    public class RepositoryPerson : RepositoryBase<Person>, IRepositoryPerson
+    public class RepositoryPerson : IRepositoryPerson
     {
         private readonly PostgreSQLContext postgreSQLContext;
-        public RepositoryPerson(PostgreSQLContext postgreSQLContext) : base(postgreSQLContext)
+        private readonly IRepositoryPersonAccount repositoryPersonAccount;
+        public RepositoryPerson(PostgreSQLContext postgreSQLContext, IRepositoryPersonAccount repositoryPersonAccount)
         {
             this.postgreSQLContext = postgreSQLContext;
+            this.repositoryPersonAccount = repositoryPersonAccount;
         }
 
-        public IEnumerable<PersonAccount> GetAccounts(Guid peopleId)
+        public Person CreatePerson(Person person)
         {
-            return postgreSQLContext.Set<PersonAccount>().Where(x => x.PersonId == peopleId).ToList();
+            postgreSQLContext.Set<Person>().Add(person);
+            postgreSQLContext.SaveChanges();
+            return person;
         }
 
         public IEnumerable<Card> GetCards(Guid peopleId)
         {
-            return postgreSQLContext.Set<Card>().Where(x => x.Account!.PersonId == peopleId).ToList();
-        }
+            var accounts = repositoryPersonAccount.GetAccounts(peopleId);
 
-        public PersonAccount PostAccount(Guid peopleId, PersonAccount account)
-        {
-            account.PersonId = peopleId;
-            postgreSQLContext.Set<PersonAccount>().Add(account);
+            List<Card> cards = new List<Card>();
 
-            var person = postgreSQLContext.Set<Person>().Where(x => x.Id == peopleId).FirstOrDefault();
-            
-            //if (person is not null)
-            //    person.Accounts.Append(account);
+            foreach (var account in accounts)
+            {
+                var accountCards = repositoryPersonAccount.GetCards(account.Id)?.Cards;
 
-            postgreSQLContext.SaveChanges();
+                if (accountCards != null)
+                    cards.AddRange(accountCards);
+            }
 
-            return account;
+            return cards;
         }
     }
 }

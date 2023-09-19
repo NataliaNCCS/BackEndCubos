@@ -1,49 +1,66 @@
 ﻿using BackEndCubos.Domain.Core.Interfaces.Repositories;
 using BackEndCubos.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackEndCubos.Infra.Data.Repositories
 {
-    public class RepositoryPersonAccount : RepositoryBase<PersonAccount>, IRepositoryPersonAccount
+    public class RepositoryPersonAccount : IRepositoryPersonAccount
     {
         private readonly PostgreSQLContext postgreSQLContext;
-        public RepositoryPersonAccount(PostgreSQLContext postgreSQLContext) : base(postgreSQLContext)
+        public RepositoryPersonAccount(PostgreSQLContext postgreSQLContext)
         {
             this.postgreSQLContext = postgreSQLContext;
         }
 
-        public object GetBalance(Guid accountId)
+        public PersonAccount CreateAccount(Guid peopleId, PersonAccount account)
         {
-            return postgreSQLContext.Set<PersonAccount>().Where(x => x.Id == accountId);
-        }
-
-        public IEnumerable<Card> GetCards(Guid accountId)
-        {
-            return postgreSQLContext.Set<Card>().Where(x => x.AccountId == accountId).ToList();
-        }
-
-        public IEnumerable<Transaction> GetTransactions(Guid accountId)
-        {
-            return postgreSQLContext.Set<Transaction>().Where(x => x.AccountId == accountId).ToList();
-        }
-
-        public Card PostCard(Guid accountId, Card card)
-        {
-            card.AccountId = accountId;
-            postgreSQLContext.Set<Card>().Add(card);
-            postgreSQLContext.Set<PersonAccount>().Where(x => x.Id == accountId).First().Cards.Append(card);
+            account.PersonId = peopleId;
+            postgreSQLContext.Set<PersonAccount>().Add(account);
 
             postgreSQLContext.SaveChanges();
-            return card;
+
+            return account;
         }
 
-        public Transaction PostTransaction(Guid accountId, Transaction transaction)
+        public IEnumerable<PersonAccount> GetAccounts(Guid peopleId)
         {
-            transaction.AccountId = accountId;
-            postgreSQLContext.Set<Transaction>().Add(transaction);
-            postgreSQLContext.Set<PersonAccount>().Where(x => x.Id == accountId).First().Transactions.Append(transaction);
+            return postgreSQLContext.Set<PersonAccount>().Where(x => x.PersonId == peopleId).ToList();
+        }
 
-            postgreSQLContext.SaveChanges();
-            return transaction;
+        public PersonAccount GetBalance(Guid accountId)
+        {
+            return postgreSQLContext.Set<PersonAccount>().Where(x => x.Id == accountId).First();
+        }
+
+        public PersonAccount GetCards(Guid accountId)
+        {
+            var personAccountWithCards = postgreSQLContext.Set<PersonAccount>()
+                                                        .Include(x => x.Cards)
+                                                        .FirstOrDefault(x => x.Id == accountId);
+
+            if (personAccountWithCards == null || !personAccountWithCards.Cards!.Any())
+                return personAccountWithCards!;
+
+            return personAccountWithCards;
+        }
+
+        public bool CheckBalance(Guid accountId, decimal value)
+        {
+            var account = postgreSQLContext.Set<PersonAccount>().Find(accountId);
+
+            var balance = account!.Balance;
+
+            if ((balance += value) < 0)
+                return false;
+
+            return true;
+        }
+
+        public void UpdateBalance(Guid accountId, decimal value)
+        {
+            var account = postgreSQLContext.Set<PersonAccount>().Find(accountId);
+            account!.Balance += value;
+            postgreSQLContext.Update(account);
         }
     }
 }

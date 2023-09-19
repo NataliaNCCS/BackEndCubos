@@ -1,40 +1,83 @@
-﻿using BackEndCubos.Domain.Core.Interfaces.Repositories;
+﻿using BackEndCubos.Domain.Core.DTOS.ResponseDTOs;
+using BackEndCubos.Domain.Core.Interfaces.Repositories;
 using BackEndCubos.Domain.Core.Interfaces.Services;
 using BackEndCubos.Domain.Entities;
+using static BackEndCubos.Domain.Core.DTOS.ResponseDTOs.PersonAccountDTO;
 
 namespace BackEndCubos.Domain.Services
 {
-    public class ServicePersonAccount : ServiceBase<PersonAccount>, IServicePersonAccount
+    public class ServicePersonAccount : IServicePersonAccount
     {
         private readonly IRepositoryPersonAccount repository;
-        public ServicePersonAccount(IRepositoryPersonAccount repository) : base(repository)
+        public ServicePersonAccount(IRepositoryPersonAccount repository)
         {
             this.repository = repository;
         }
 
-        public object GetBalance(Guid accountId)
+        public PersonAccountDTO CreateAccount(Guid peopleId, PersonAccount account)
         {
-            return repository.GetBalance(accountId);
+            account.CreatedAt = DateTime.UtcNow;
+            account.UpdatedAt = DateTime.UtcNow;
+
+            var createdAccount = repository.CreateAccount(peopleId, account);
+
+            return new PersonAccountDTO
+            {
+                Id = createdAccount.Id,
+                Branch = createdAccount.Branch,
+                Account = createdAccount.Account,
+                CreatedAt = createdAccount.CreatedAt,
+                UpdatedAt = createdAccount.UpdatedAt
+            };
         }
 
-        public IEnumerable<Card> GetCards(Guid accountId)
+        public IEnumerable<PersonAccountDTO> GetAccounts(Guid peopleId)
         {
-            return repository.GetCards(accountId);
+            return repository.GetAccounts(peopleId)
+            .Select(account => new PersonAccountDTO
+            {
+                Id = account.Id,
+                Branch = account.Branch,
+                Account = account.Account,
+                CreatedAt = account.CreatedAt,
+                UpdatedAt = account.UpdatedAt
+            }).ToList();
         }
 
-        public IEnumerable<Transaction> GetTransactions(Guid accountId)
+        public PersonAccountWithBalanceDTO GetBalance(Guid accountId)
         {
-            return repository.GetTransactions(accountId);
+            var account = repository.GetBalance(accountId);
+
+            return new PersonAccountWithBalanceDTO
+            {
+                Balance = account.Balance,
+            };
         }
 
-        public Card PostCard(Guid accountId, Card card)
+        public PersonAccountWithCardsDTO GetCards(Guid accountId)
         {
-            return repository.PostCard(accountId, card);
-        }
+            var account = repository.GetCards(accountId);
 
-        public Transaction PostTransaction(Guid accountId, Transaction transaction)
-        {
-            return repository.PostTransaction(accountId, transaction);
+            var cards = account.Cards!
+            .Select(card => new CardDTO
+            {
+                Id = card.Id,
+                Type = card.Type,
+                Number = card.Number.Substring(card.Number.Length - 4),
+                CVV = card.CVV,
+                CreatedAt = card.CreatedAt,
+                UpdatedAt = card.UpdatedAt,
+            }).ToList();
+
+            return new PersonAccountWithCardsDTO
+            {
+                Id = account.Id,
+                Branch = account.Branch,
+                Account = account.Account,
+                Cards = cards,
+                CreatedAt = account.CreatedAt,
+                UpdatedAt = account.UpdatedAt
+            };
         }
     }
 }

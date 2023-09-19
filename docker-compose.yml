@@ -34,6 +34,9 @@ services: # Services to deploy
   cubos_back:
     container_name: back_container
     image: cubos_back
+    depends_on:
+      - postgres
+      - pgadmin
     build:
       dockerfile: Dockerfile
     ports:

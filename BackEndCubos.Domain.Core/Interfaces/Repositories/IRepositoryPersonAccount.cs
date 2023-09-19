@@ -2,12 +2,15 @@
 
 namespace BackEndCubos.Domain.Core.Interfaces.Repositories
 {
-    public interface IRepositoryPersonAccount : IRepositoryBase<PersonAccount>
+    public interface IRepositoryPersonAccount
     {
-        Card PostCard(Guid accountId, Card card);
-        IEnumerable<Card> GetCards(Guid accountId);
-        Transaction PostTransaction(Guid accountId, Transaction transaction);
-        IEnumerable<Transaction> GetTransactions(Guid accountId);
-        object GetBalance(Guid accountId);
+        PersonAccount CreateAccount(Guid peopleId, PersonAccount account);
+        IEnumerable<PersonAccount> GetAccounts(Guid peopleId);
+        PersonAccount GetBalance(Guid accountId);
+
+        PersonAccount GetCards(Guid accountId);
+
+        bool CheckBalance(Guid accountId, decimal value);
+        void UpdateBalance(Guid accountId, decimal value);
     }
 }

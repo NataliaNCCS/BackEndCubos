@@ -1,11 +1,13 @@
-﻿using BackEndCubos.Domain.Entities;
+﻿using BackEndCubos.Domain.Core.DTOS.ResponseDTOs;
+using BackEndCubos.Domain.Entities;
+using static BackEndCubos.Domain.Core.DTOS.ResponseDTOs.PersonDTO;
 
 namespace BackEndCubos.Domain.Core.Interfaces.Services
 {
-    public interface IServicePerson : IServiceBase<Person>
+    public interface IServicePerson 
     {
-        PersonAccount PostAccount(Guid peopleId, PersonAccount account);
-        IEnumerable<PersonAccount> GetAccounts(Guid peopleId);
-        IEnumerable<Card> GetCards(Guid peopleId);
+        PersonDTO CreatePerson(Person person);
+        public PersonWithCardsDTO GetCards(Guid personId);
+
     }
 }

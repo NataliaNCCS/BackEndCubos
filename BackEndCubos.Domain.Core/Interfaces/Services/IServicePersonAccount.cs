@@ -1,13 +1,14 @@
-﻿using BackEndCubos.Domain.Entities;
+﻿using BackEndCubos.Domain.Core.DTOS.ResponseDTOs;
+using BackEndCubos.Domain.Entities;
+using static BackEndCubos.Domain.Core.DTOS.ResponseDTOs.PersonAccountDTO;
 
 namespace BackEndCubos.Domain.Core.Interfaces.Services
 {
-    public interface IServicePersonAccount : IServiceBase<PersonAccount>
+    public interface IServicePersonAccount
     {
-        Card PostCard(Guid accountId, Card card);
-        IEnumerable<Card> GetCards(Guid accountId);
-        Transaction PostTransaction(Guid accountId, Transaction transaction);
-        IEnumerable<Transaction> GetTransactions(Guid accountId);
-        object GetBalance(Guid accountId);
+        PersonAccountDTO CreateAccount(Guid peopleId, PersonAccount account);
+        IEnumerable<PersonAccountDTO> GetAccounts(Guid peopleId);
+        PersonAccountWithBalanceDTO GetBalance(Guid accountId);
+        PersonAccountWithCardsDTO GetCards(Guid accountId);
     }
 }
