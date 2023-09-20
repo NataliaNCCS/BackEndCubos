@@ -1,7 +1,6 @@
 ﻿using BackEndCubos.Domain.Core.DTOs;
 using BackEndCubos.Domain.Core.DTOS.ResponseDTOs;
 using BackEndCubos.Domain.Entities;
-using BackEndCubos.Domain.Utils.Enums;
 
 namespace BackEndCubos.Domain.Core.Interfaces.Services
 {
