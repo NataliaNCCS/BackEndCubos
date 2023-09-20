@@ -12,7 +12,7 @@ CONFIGURAÇÃO:
 
 Conexão com o Banco de Dados: No arquivo appsettings.json, ajuste o valor da chave PostgreSQLConnection com a string de conexão que aponte para o seu banco de dados PostgreSQL local.
 
-Sartup project: Sete o projeto "BackEndCubos.API" como startup project, caso não esteja.
+Sartup project: Sete o projeto "BackEndCubos.OPENAPI" como startup project, caso não esteja.
 
 Migrations: No Package Manager Console do Visual Studio, execute o comando update-database para aplicar as migrations e preparar o banco de dados.
 
