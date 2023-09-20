@@ -94,7 +94,13 @@ namespace BackEndCubos.OPENAPI.Controllers
                 if (accountId == Guid.Empty || !ModelState.IsValid)
                     return BadRequest();
 
-                var transactions = serviceTransaction.GetTransactions(accountId, pagination);
+                if (pagination.ItemsPerPage <= 0 || pagination.CurrentPage <= 0)
+                {
+                    pagination.ItemsPerPage = 100;
+                    pagination.CurrentPage = 1;
+                }
+
+                    var transactions = serviceTransaction.GetTransactions(accountId, pagination);
 
                 return Ok(transactions);
             }
