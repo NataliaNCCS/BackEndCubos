@@ -15,8 +15,11 @@ namespace BackEndCubos.Infra.Data.Repositories
 
         public Person CreatePerson(Person person)
         {
-            postgreSQLContext.Set<Person>().Add(person);
+            postgreSQLContext.Set<Person>()
+                .Add(person);
+            
             postgreSQLContext.SaveChanges();
+            
             return person;
         }
 

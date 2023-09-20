@@ -15,7 +15,8 @@ namespace BackEndCubos.Infra.Data.Repositories
         public PersonAccount CreateAccount(Guid peopleId, PersonAccount account)
         {
             account.PersonId = peopleId;
-            postgreSQLContext.Set<PersonAccount>().Add(account);
+            postgreSQLContext.Set<PersonAccount>()
+                .Add(account);
 
             postgreSQLContext.SaveChanges();
 
@@ -24,19 +25,23 @@ namespace BackEndCubos.Infra.Data.Repositories
 
         public IEnumerable<PersonAccount> GetAccounts(Guid peopleId)
         {
-            return postgreSQLContext.Set<PersonAccount>().Where(x => x.PersonId == peopleId).ToList();
+            return postgreSQLContext.Set<PersonAccount>()
+                .Where(x => x.PersonId == peopleId)
+                .ToList();
         }
 
         public PersonAccount GetBalance(Guid accountId)
         {
-            return postgreSQLContext.Set<PersonAccount>().Where(x => x.Id == accountId).First();
+            return postgreSQLContext.Set<PersonAccount>()
+                .Where(x => x.Id == accountId)
+                .First();
         }
 
         public PersonAccount GetCards(Guid accountId)
         {
             var personAccountWithCards = postgreSQLContext.Set<PersonAccount>()
-                                                        .Include(x => x.Cards)
-                                                        .FirstOrDefault(x => x.Id == accountId);
+                .Include(x => x.Cards)
+                .FirstOrDefault(x => x.Id == accountId);
 
             if (personAccountWithCards == null || !personAccountWithCards.Cards!.Any())
                 return personAccountWithCards!;
@@ -46,7 +51,8 @@ namespace BackEndCubos.Infra.Data.Repositories
 
         public bool CheckBalance(Guid accountId, decimal value)
         {
-            var account = postgreSQLContext.Set<PersonAccount>().Find(accountId);
+            var account = postgreSQLContext.Set<PersonAccount>()
+                .Find(accountId);
 
             var balance = account!.Balance;
 
@@ -58,8 +64,11 @@ namespace BackEndCubos.Infra.Data.Repositories
 
         public void UpdateBalance(Guid accountId, decimal value)
         {
-            var account = postgreSQLContext.Set<PersonAccount>().Find(accountId);
+            var account = postgreSQLContext.Set<PersonAccount>()
+                .Find(accountId);
+            
             account!.Balance += value;
+            
             postgreSQLContext.Update(account);
         }
     }

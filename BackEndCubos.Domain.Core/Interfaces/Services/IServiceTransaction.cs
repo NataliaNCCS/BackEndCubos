@@ -8,7 +8,7 @@ namespace BackEndCubos.Domain.Core.Interfaces.Services
     public interface IServiceTransaction
     {
         TransactionDTO CreateTransaction(Guid accountId, Transaction transaction);
-        TransactionWithPaginationDTO GetTransactions(Guid accountId, Pagination pagination);
+        TransactionWithPaginationDTO GetTransactions(Guid accountId, Pagination pagination, string startDate, string endDate);
 
         TransactionDTO RevertTransaction(Guid accountId, Guid transactionId);
 

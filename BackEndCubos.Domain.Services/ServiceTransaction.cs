@@ -3,6 +3,7 @@ using BackEndCubos.Domain.Core.DTOS.ResponseDTOs;
 using BackEndCubos.Domain.Core.Interfaces.Repositories;
 using BackEndCubos.Domain.Core.Interfaces.Services;
 using BackEndCubos.Domain.Entities;
+using System.Globalization;
 using static BackEndCubos.Domain.Core.DTOS.ResponseDTOs.TransactionDTO;
 
 namespace BackEndCubos.Domain.Services
@@ -44,11 +45,27 @@ namespace BackEndCubos.Domain.Services
                 Description = "Falha",
             };
         }
-        public TransactionWithPaginationDTO GetTransactions(Guid accountId, Pagination pagination)
+        public TransactionWithPaginationDTO GetTransactions(Guid accountId, Pagination pagination, string startDate, string endDate)
         {
+            DateTime startDateTimeUtc;
+            DateTime  endDateTimeUtc;
+
+            if (!string.IsNullOrEmpty(startDate)
+                && DateTime.TryParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedStartDate))
+                startDateTimeUtc = DateTime.SpecifyKind(parsedStartDate, DateTimeKind.Utc);
+            else
+                startDateTimeUtc = DateTime.SpecifyKind(DateTime.Parse("01/01/1900"), DateTimeKind.Utc);
+
+            if (!string.IsNullOrEmpty(endDate)
+                && DateTime.TryParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedEndDate))
+                endDateTimeUtc = DateTime.SpecifyKind(parsedEndDate, DateTimeKind.Utc);
+            else
+                endDateTimeUtc = DateTime.UtcNow;
+
+
             return new TransactionWithPaginationDTO()
             {
-                Transactions = repository.GetTransactions(accountId)
+                Transactions = repository.GetTransactions(accountId, startDateTimeUtc, endDateTimeUtc)
                 .Select(transaction => new TransactionDTO
                 {
                     Id = transaction.Id,

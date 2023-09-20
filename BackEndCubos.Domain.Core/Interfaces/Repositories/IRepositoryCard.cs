@@ -1,5 +1,4 @@
 ﻿using BackEndCubos.Domain.Entities;
-using BackEndCubos.Domain.Utils.Enums;
 
 namespace BackEndCubos.Domain.Core.Interfaces.Repositories
 {

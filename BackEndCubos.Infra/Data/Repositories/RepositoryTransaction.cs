@@ -23,9 +23,12 @@ namespace BackEndCubos.Infra.Data.Repositories
             return transaction;
         }
 
-        public IEnumerable<Transaction> GetTransactions(Guid accountId)
+        public IEnumerable<Transaction> GetTransactions(Guid accountId, DateTime startDateTimeUtc, DateTime endDateTimeUtc)
         {
-            return postgreSQLContext.Set<Transaction>().Where(x => x.AccountId == accountId).ToList();
+            return postgreSQLContext.Set<Transaction>()
+                .Where(x => x.AccountId == accountId)
+                .Where(x => x.CreatedAt >= startDateTimeUtc && x.CreatedAt <= endDateTimeUtc)
+                .ToList();
         }
 
         public Transaction RevertTransaction(Guid accountId, Guid transactionId)

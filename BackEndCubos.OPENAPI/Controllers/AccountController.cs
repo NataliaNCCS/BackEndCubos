@@ -2,6 +2,7 @@
 using BackEndCubos.Domain.Core.Interfaces.Services;
 using BackEndCubos.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace BackEndCubos.OPENAPI.Controllers
 {
@@ -87,12 +88,13 @@ namespace BackEndCubos.OPENAPI.Controllers
         }
 
         [HttpGet("accounts/{accountId}/transactions")]
-        public ActionResult GetTransactions(Guid accountId, [FromQuery] Pagination pagination)
+        public ActionResult GetTransactions(Guid accountId, [FromQuery] Pagination pagination, [FromQuery] string? startDate, [FromQuery] string? endDate)
         {
             try
             {
                 if (accountId == Guid.Empty || !ModelState.IsValid)
                     return BadRequest();
+
 
                 if (pagination.ItemsPerPage <= 0 || pagination.CurrentPage <= 0)
                 {
@@ -100,7 +102,28 @@ namespace BackEndCubos.OPENAPI.Controllers
                     pagination.CurrentPage = 1;
                 }
 
-                    var transactions = serviceTransaction.GetTransactions(accountId, pagination);
+                if (startDate is not null
+                     && !DateTime.TryParseExact(startDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+                    return BadRequest("Formato de data de início inválido");
+
+
+                if (endDate is not null
+                    && !DateTime.TryParseExact(endDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+                    return BadRequest("Formato de data final inválido");
+
+                if (startDate is null)
+                    startDate = "01/01/0001 00:00:00";
+
+
+                if (endDate == null ||
+                   (endDate.Substring(0, 2).PadLeft(2, '0') == DateTime.Now.Day.ToString().PadLeft(2, '0') &&
+                    endDate.Substring(3, 2).PadLeft(2, '0') == DateTime.Now.Month.ToString().PadLeft(2, '0') &&
+                    endDate.Substring(6, 4) == DateTime.Now.Year.ToString()))
+                {
+                    endDate = "31/12/9999 23:59:59.9999999";
+                }
+
+                var transactions = serviceTransaction.GetTransactions(accountId, pagination, startDate, endDate);
 
                 return Ok(transactions);
             }
