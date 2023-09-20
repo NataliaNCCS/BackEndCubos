@@ -8,7 +8,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["BackEndCubos.OPENAPI/BackEndCubos.OPENAPI.csproj", "BackEndCubos.OPENAPI/"]
-COPY ["BackEndCubos.Application/BackEndCubos.Application.csproj", "BackEndCubos.Application/"]
 COPY ["BackEndCubos.Domain/BackEndCubos.Domain.csproj", "BackEndCubos.Domain/"]
 COPY ["BackEndCubos.Infra/BackEndCubos.Infra.csproj", "BackEndCubos.Infra/"]
 COPY ["BackEndCubos.Domain.Core/BackEndCubos.Domain.Core.csproj", "BackEndCubos.Domain.Core/"]
