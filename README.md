@@ -33,5 +33,7 @@ Ou através das strings:
 EXECUTANDO O PROJETO:
 
 Abra o projeto utilizando o Visual Studio.
+
 Execute o "build" do projeto para restaurar todos os pacotes e dependências.
+
 Com o banco de dados ativo e a conexão configurada, inicie a aplicação pressionando F5 ou usando o botão "Run"
