@@ -1,41 +1,36 @@
-Aqui estão as instruções para configurar e executar o projeto em um ambiente de desenvolvimento local.
+---
+Instruções de Configuração do Projeto
 
 ---
-PRÉ-REQUISITOS:
+PRÉ-REQUISITOS
+Antes de iniciar, certifique-se de ter instalado:
 
-PostgreSQL: É necessário ter o PostgreSQL instalado. O projeto foi desenvolvido utilizando a versão 15.4. Recomenda-se utilizar esta versão. Faça o download aqui: https://www.postgresql.org/download/.
-
-Visual Studio: O Visual Studio é essencial para a execução e desenvolvimento deste projeto. Caso não o tenha instalado, obtenha-o aqui: https://visualstudio.microsoft.com/pt-br/.
-
----
-CONFIGURAÇÃO:
-
-Conexão com o Banco de Dados: No arquivo appsettings.json, ajuste o valor da chave PostgreSQLConnection com a string de conexão que aponte para o seu banco de dados PostgreSQL local.
-
-Sartup project: Sete o projeto "BackEndCubos.OPENAPI" como startup project, caso não esteja.
-
-Migrations: No Package Manager Console do Visual Studio, execute o comando update-database para aplicar as migrations e preparar o banco de dados.
-
+Visual Studio (com suporte para .NET Core)
+Docker Desktop
 
 ---
-VALIDAÇÕES:
+CLONAGEM DO PROJETO
+Para começar, clone o repositório para sua máquina local usando o Visual Studio. Você pode fazer isso diretamente através da interface do Visual Studio ou via linha de comando: "git clone <https://github.com/NataliaNCCS/BackEndCubos.git>"
 
-CPF e CNPJ:
-Ao adicionar uma pessoa no sistema, o número de CPF e CNPJ é validado. Certifique-se de inserir um número válido.
-
-Inserção de Cartão:
-Ao adicionar um cartão, considere os tipos:
-
-Definidos através de números:
-0: Físico (Physical) OU 1: Virtual
-Ou através das strings:
-"physical": Cartões Físicos OU "virtual": Cartões Virtuais
+--
+CONFIGURAÇÃO DO PROJETO DO VISUAL STUDIO
+Depois de clonar o repositório, siga estes passos para configurar o projeto:
 
 ---
-EXECUTANDO O PROJETO:
+Abra a solução no Visual Studio.
+Navegue até a pasta 1-Services.
+Clique com o botão direito no projeto BackEndCubos.OPENAPI.
+Escolha Set as Startup Project para definir como o projeto de inicialização.
+Inicialização do Docker
+Inicialize os contêneres necessários usando Docker Compose. Abra um terminal e execute o seguinte comando no diretório raiz do projeto: "docker-compose up"
+Isso vai configurar e iniciar todos os serviços necessários definidos no seu docker-compose.yml.
 
-Abra o projeto utilizando o Visual Studio.
+--- 
+CONFIGURAÇÃO DO BANCO DE DADOS
+Para configurar o banco de dados e aplicar as migrations do Entity Framework, siga estas etapas:
 
-Execute o "build" do projeto para restaurar todos os pacotes e dependências.
+Abra o Console do Gerenciador de Pacotes no Visual Studio.
+Navegue para o diretório do projeto de infraestrutura: "cd .\BackEndCubos.Infra"
+Execute o seguinte comando para atualizar o banco de dados: "update-database"
 
-Com o banco de dados ativo e a conexão configurada, inicie a aplicação pressionando F5 ou usando o botão "Run"
+Após seguir estas etapas, seu ambiente deve estar configurado e pronto para ser usado. Execute o projeto no Visual Studio para iniciar a aplicação.
